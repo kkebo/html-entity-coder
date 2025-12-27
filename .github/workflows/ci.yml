@@ -1,0 +1,84 @@
+name: ci
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+permissions: {}
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+jobs:
+  test:
+    runs-on: ubuntu-24.04-arm
+    container: swift:6.0
+    outputs:
+      SUMMARY: ${{ steps.summary.outputs.SUMMARY }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            ~/.cache/org.swift.swiftpm
+            ~/.swiftpm
+            .build
+          key: ${{ runner.os }}-swiftpm-${{ hashFiles('Package.resolved') }}
+          restore-keys: ${{ runner.os }}-swiftpm-
+      - run: swift --version
+      - run: swift build --build-tests --disable-xctest --enable-code-coverage
+      - run: swift test --skip-build --disable-xctest --enable-code-coverage
+      - name: llvm-cov report
+        id: report
+        run: |
+          echo 'OUTPUT<<EOF' >> "$GITHUB_OUTPUT"
+          llvm-cov report .build/debug/html-entity-coderPackageTests.xctest --instr-profile=.build/debug/codecov/default.profdata --ignore-filename-regex=".build|Tests" --show-region-summary=false --show-branch-summary=false >> "$GITHUB_OUTPUT"
+          echo 'EOF' >> "$GITHUB_OUTPUT"
+      - name: Create summary text
+        id: summary
+        env:
+          REPORT_OUTPUT: ${{ steps.report.outputs.OUTPUT }}
+        run: |
+          echo 'SUMMARY<<EOF' >> "$GITHUB_OUTPUT"
+          echo '## Coverage Summary' >> "$GITHUB_OUTPUT"
+          echo >> "$GITHUB_OUTPUT"
+          echo "$(date)" >> "$GITHUB_OUTPUT"
+          echo >> "$GITHUB_OUTPUT"
+          echo '```' >> "$GITHUB_OUTPUT"
+          echo "$REPORT_OUTPUT" >> "$GITHUB_OUTPUT"
+          echo '```' >> "$GITHUB_OUTPUT"
+          echo 'EOF' >> "$GITHUB_OUTPUT"
+      - name: Create a job summary
+        env:
+          SUMMARY: ${{ steps.summary.outputs.SUMMARY }}
+        run: echo "$SUMMARY" >> "$GITHUB_STEP_SUMMARY"
+  comment-test:
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    needs: test
+    runs-on: ubuntu-24.04-arm
+    continue-on-error: true
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b  # v3.0.1
+        with:
+          message: ${{ needs.test.outputs.SUMMARY }}
+          comment-tag: coverage
+  lint:
+    runs-on: ubuntu-24.04-arm
+    container: swift:6.2
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+      - run: swift format lint -rsp .
+  yamllint:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+      - run: yamllint --version
+      - run: yamllint --strict --config-file .yamllint.yml .

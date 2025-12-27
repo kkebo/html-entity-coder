@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "HTMLEntityCoder",
+    name: "html-entity-coder",
     products: [
         .library(
             name: "HTMLEntityCoder",
