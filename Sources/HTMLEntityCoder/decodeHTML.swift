@@ -1,14 +1,20 @@
 import DequeModule
 
 /// Decodes any HTML named and numerical character references.
-public func decodeHTML(_ input: String) -> String {
+///
+/// - Parameters:
+///   - input: The input text.
+///   - isInAttr: Specifies if character refernces are treated as if they are in attributes.
+///
+/// - Returns: The decoded text.
+public func decodeHTML(_ input: String, inAttr isInAttr: Bool = false) -> String {
     var output: ContiguousArray<Unicode.Scalar> = []
     output.reserveCapacity(input.unicodeScalars.count)
     var input = Deque(input.unicodeScalars)
     while let c = input.popFirst() {
         switch c {
         case "&":
-            var tokenizer = CharRefTokenizer(inAttr: false)
+            var tokenizer = CharRefTokenizer(inAttr: isInAttr)
             repeat {
                 switch tokenizer.step(input: &input) {
                 case .continue: continue
