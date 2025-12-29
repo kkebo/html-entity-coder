@@ -1,4 +1,8 @@
 /// Replaces any characters that aren't printable ASCII characters and `&`, `<`, `>`, `"`, and `'` with HTML character references.
+///
+/// - Parameter input: The input text.
+///
+/// - Returns: The encoded text.
 public func encodeHTML(_ input: String) -> String {
     var output = ""
     output.reserveCapacity(input.utf8.count)
