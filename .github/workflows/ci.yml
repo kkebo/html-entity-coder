@@ -9,9 +9,26 @@ defaults:
   run:
     shell: bash -euo pipefail {0}
 jobs:
-  test:
+  build-swift-6-0:
     runs-on: ubuntu-24.04-arm
     container: swift:6.0
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+      - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb  # v5.0.1
+        with:
+          path: |
+            ~/.cache/org.swift.swiftpm
+            ~/.swiftpm
+            .build
+          key: ${{ runner.os }}-swiftpm-6.0-${{ hashFiles('Package.resolved') }}
+          restore-keys: ${{ runner.os }}-swiftpm-6.0-
+      - run: swift --version
+      - run: swift build
+  test:
+    runs-on: ubuntu-24.04-arm
+    container: swift:6.2
     outputs:
       SUMMARY: ${{ steps.summary.outputs.SUMMARY }}
     permissions:
@@ -24,8 +41,8 @@ jobs:
             ~/.cache/org.swift.swiftpm
             ~/.swiftpm
             .build
-          key: ${{ runner.os }}-swiftpm-${{ hashFiles('Package.resolved') }}
-          restore-keys: ${{ runner.os }}-swiftpm-
+          key: ${{ runner.os }}-swiftpm-6.2-${{ hashFiles('Package.resolved') }}
+          restore-keys: ${{ runner.os }}-swiftpm-6.2-
       - run: swift --version
       - run: swift build --build-tests --disable-xctest --enable-code-coverage
       - run: swift test --skip-build --disable-xctest --enable-code-coverage
