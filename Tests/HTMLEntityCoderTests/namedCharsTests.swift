@@ -1,23 +1,11 @@
-import Foundation
 import Testing
 
 @testable import HTMLEntityCoder
 
-private struct Entry: Decodable {
-    var codepoints: [UInt32]
-}
-
-// swift-format-ignore: NeverUseForceTry, NeverForceUnwrap
-private let dict = try! JSONDecoder()
-    .decode(
-        [String: Entry].self,
-        from: Data(contentsOf: Bundle.module.url(forResource: "entities", withExtension: "json")!)
-    )
-
 @Test
 func testNamedChars() async throws {
     try await withThrowingDiscardingTaskGroup { group in
-        for (key, value) in dict {
+        for (key, value) in entities {
             group.addTask {
                 let key = key.dropFirst()
                 let result1 = try #require(namedChars[key])
@@ -35,7 +23,7 @@ func testNamedChars() async throws {
 @Test
 func testReversedNamedChars() async throws {
     try await withThrowingDiscardingTaskGroup { group in
-        for value in dict.values {
+        for value in entities.values {
             group.addTask {
                 let str = try String(String.UnicodeScalarView(value.codepoints.lazy.map { try #require(.init($0)) }))
                 switch str {
