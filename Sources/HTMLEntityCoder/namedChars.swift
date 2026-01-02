@@ -1,5 +1,11 @@
 private func dedup<S: StringProtocol>(lhs: S, rhs: S) -> S {
-    if lhs.count < rhs.count {
+    let lhsHasSuffix = lhs.hasSuffix(";")
+    let rhsHasSuffix = rhs.hasSuffix(";")
+    return if !lhsHasSuffix && rhsHasSuffix {
+        rhs
+    } else if lhsHasSuffix && !rhsHasSuffix {
+        lhs
+    } else if lhs.count < rhs.count {
         lhs
     } else if lhs.count > rhs.count {
         rhs
@@ -21,6 +27,7 @@ extension Character {
     }
 }
 
+// FIXME: This process should be done at compile-time, not runtime.
 let reversedNamedChars: [Character: Substring] = .init(
     namedChars.lazy.compactMap { k, v in Character(from: v).map { ($0, k) } },
     uniquingKeysWith: dedup
