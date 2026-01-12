@@ -47,7 +47,6 @@ struct CharRefTokenizer: ~Copyable {
         }
     }
 
-    @inline(__always)
     private mutating func initial(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
         switch input.first {
         case ("0"..."9")?, ("A"..."Z")?, ("a"..."z")?:
@@ -61,7 +60,6 @@ struct CharRefTokenizer: ~Copyable {
         }
     }
 
-    @inline(__always)
     private mutating func named(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
         repeat {
             guard let c = input.first else {
@@ -88,7 +86,6 @@ struct CharRefTokenizer: ~Copyable {
         } while true
     }
 
-    @inline(__always)
     private mutating func namedEnd(
         endIndex: Substring.Index,
         replaceChars: (Unicode.Scalar, Unicode.Scalar),
@@ -117,7 +114,6 @@ struct CharRefTokenizer: ~Copyable {
         }
     }
 
-    @inline(__always)
     private mutating func ambiguousAmpersand(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
         repeat {
             guard let c = input.first else {
@@ -139,7 +135,6 @@ struct CharRefTokenizer: ~Copyable {
         } while true
     }
 
-    @inline(__always)
     private mutating func numeric(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
         switch input.first {
         case "X":
@@ -153,7 +148,6 @@ struct CharRefTokenizer: ~Copyable {
         return .continue
     }
 
-    @inline(__always)
     private mutating func hexadecimalStart(
         uppercase: Bool,
         input: inout Deque<Unicode.Scalar>
@@ -170,7 +164,6 @@ struct CharRefTokenizer: ~Copyable {
         }
     }
 
-    @inline(__always)
     private mutating func decimalStart(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
         switch input.first {
         case ("0"..."9")?:
@@ -183,7 +176,6 @@ struct CharRefTokenizer: ~Copyable {
         }
     }
 
-    @inline(__always)
     private mutating func hexadecimal(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
         repeat {
             if let c = input.first {
@@ -225,7 +217,6 @@ struct CharRefTokenizer: ~Copyable {
         } while true
     }
 
-    @inline(__always)
     private mutating func decimal(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
         repeat {
             if let c = input.first {
@@ -252,7 +243,6 @@ struct CharRefTokenizer: ~Copyable {
     }
 
     // swift-format-ignore: NeverForceUnwrap
-    @inline(__always)
     private mutating func numericEnd(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
         switch self.num {
         case 0x00:
