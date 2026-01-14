@@ -8,7 +8,7 @@ func testNamedChars() async throws {
         for (key, value) in entities {
             group.addTask {
                 let key = key.dropFirst()
-                let result1 = try #require(namedChars[key])
+                let result1 = try #require(namedChars[String(key)])
                 let result2 = try #require(processedNamedChars[key])
                 #expect(result1 == result2)
                 switch result1 {
@@ -33,7 +33,7 @@ func testReversedNamedChars() async throws {
                     #expect(str.count == 1)
                     let c = Character(str)
                     let key = try #require(reversedNamedChars[c])
-                    switch try #require(namedChars[key]) {
+                    switch try #require(namedChars[String(key)]) {
                     case (let c1, "\0"): #expect(value.codepoints == [c1.value])
                     case (let c1, let c2): #expect(value.codepoints == [c1.value, c2.value])
                     }
