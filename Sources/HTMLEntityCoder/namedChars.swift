@@ -29,25 +29,27 @@ extension Character {
 
 // FIXME: This process should be done at compile-time, not runtime.
 let reversedNamedChars: [Character: Substring] = .init(
-    namedChars.lazy.compactMap { k, v in Character(from: v).map { ($0, k) } },
+    namedChars.lazy.compactMap { k, v in Character(from: v).map { ($0, k[...]) } },
     uniquingKeysWith: dedup
 )
 
 // FIXME: This process should be done at compile-time, not runtime.
 let processedNamedChars: [Substring: (Unicode.Scalar, Unicode.Scalar)] = {
-    var namedChars = namedChars
-    for key in namedChars.keys {
+    var result: [Substring: (Unicode.Scalar, Unicode.Scalar)] = .init(
+        uniqueKeysWithValues: namedChars.lazy.map { key, value in (key[...], value) }
+    )
+    for key in result.keys {
         for i in 1..<key.count {
             let k = key.prefix(i)
-            if !namedChars.keys.contains(k) {
-                namedChars[k] = ("\0", "\0")
+            if !result.keys.contains(k) {
+                result[k] = ("\0", "\0")
             }
         }
     }
-    return namedChars
+    return result
 }()
 
-let namedChars: [Substring: (Unicode.Scalar, Unicode.Scalar)] = {
+let namedChars: [String: (Unicode.Scalar, Unicode.Scalar)] = {
     var dict = namedCharsPart1
     dict.reserveCapacity(namedCharsPart1.count + namedCharsPart2.count + namedCharsPart3.count)
     dict.merge(namedCharsPart2, uniquingKeysWith: { $1 })
@@ -55,7 +57,7 @@ let namedChars: [Substring: (Unicode.Scalar, Unicode.Scalar)] = {
     return dict
 }()
 
-let namedCharsPart1: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
+let namedCharsPart1: [String: (Unicode.Scalar, Unicode.Scalar)] = [
     "Aacute;": ("\u{C1}", "\0"),
     "aacute;": ("\u{E1}", "\0"),
     "Abreve;": ("\u{102}", "\0"),
@@ -1058,7 +1060,7 @@ let namedCharsPart1: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
     "lsqb;": ("\u{5B}", "\0"),
 ]
 
-let namedCharsPart2: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
+let namedCharsPart2: [String: (Unicode.Scalar, Unicode.Scalar)] = [
     "lsquo;": ("\u{2018}", "\0"),
     "lsquor;": ("\u{201A}", "\0"),
     "Lstrok;": ("\u{141}", "\0"),
@@ -2061,7 +2063,7 @@ let namedCharsPart2: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
     "Vcy;": ("\u{412}", "\0"),
 ]
 
-let namedCharsPart3: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
+let namedCharsPart3: [String: (Unicode.Scalar, Unicode.Scalar)] = [
     "vcy;": ("\u{432}", "\0"),
     "VDash;": ("\u{22AB}", "\0"),
     "Vdash;": ("\u{22A9}", "\0"),
