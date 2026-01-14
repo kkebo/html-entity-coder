@@ -47,7 +47,15 @@ let processedNamedChars: [Substring: (Unicode.Scalar, Unicode.Scalar)] = {
     return namedChars
 }()
 
-let namedChars: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
+let namedChars: [Substring: (Unicode.Scalar, Unicode.Scalar)] = {
+    var dict = namedCharsPart1
+    dict.reserveCapacity(namedCharsPart1.count + namedCharsPart2.count + namedCharsPart3.count)
+    dict.merge(namedCharsPart2, uniquingKeysWith: { $1 })
+    dict.merge(namedCharsPart3, uniquingKeysWith: { $1 })
+    return dict
+}()
+
+let namedCharsPart1: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
     "Aacute;": ("\u{C1}", "\0"),
     "aacute;": ("\u{E1}", "\0"),
     "Abreve;": ("\u{102}", "\0"),
@@ -1048,6 +1056,9 @@ let namedChars: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
     "lsime;": ("\u{2A8D}", "\0"),
     "lsimg;": ("\u{2A8F}", "\0"),
     "lsqb;": ("\u{5B}", "\0"),
+]
+
+let namedCharsPart2: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
     "lsquo;": ("\u{2018}", "\0"),
     "lsquor;": ("\u{201A}", "\0"),
     "Lstrok;": ("\u{141}", "\0"),
@@ -2048,6 +2059,9 @@ let namedChars: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
     "vBar;": ("\u{2AE8}", "\0"),
     "vBarv;": ("\u{2AE9}", "\0"),
     "Vcy;": ("\u{412}", "\0"),
+]
+
+let namedCharsPart3: [Substring: (Unicode.Scalar, Unicode.Scalar)] = [
     "vcy;": ("\u{432}", "\0"),
     "VDash;": ("\u{22AB}", "\0"),
     "Vdash;": ("\u{22A9}", "\0"),
