@@ -20,14 +20,19 @@ enum CharRefProcessResult: ~Copyable {
 }
 
 struct CharRefTokenizer: ~Copyable {
-    private var state: CharRefState = .initial
-    private var num: Int = 0
-    private var numTooBig: Bool = false
-    private var nameBuffer: Substring = ""
-    private var lastMatch: (endIndex: Substring.Index, replaceChars: (Unicode.Scalar, Unicode.Scalar))?
+    private var state: CharRefState
+    private var num: Int
+    private var numTooBig: Bool
+    private var nameBuffer: Substring
+    private var lastMatch: Optional<(endIndex: Substring.Index, replaceChars: (Unicode.Scalar, Unicode.Scalar))>
     private let isInAttr: Bool
 
     init(inAttr isInAttr: Bool) {
+        self.state = .initial
+        self.num = 0
+        self.numTooBig = false
+        self.nameBuffer = ""
+        self.lastMatch = nil
         self.isInAttr = isInAttr
     }
 
