@@ -4,6 +4,14 @@ import PackageDescription
 
 let package = Package(
     name: "html-entity-coder",
+    platforms: [
+        .macOS(.v26),
+        .iOS(.v26),
+        .watchOS(.v26),
+        .tvOS(.v26),
+        .macCatalyst(.v26),
+        .visionOS(.v26),
+    ],
     products: [
         .library(
             name: "HTMLEntityCoder",
