@@ -70,7 +70,7 @@ jobs:
         run: gh pr comment "$PR_NUMBER" --body "$SUMMARY"
   lint:
     runs-on: ubuntu-24.04-arm
-    container: swift:6.2
+    container: swift:6.3
     permissions:
       contents: read
     steps:
