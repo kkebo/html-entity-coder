@@ -1,5 +1,7 @@
 # html-entity-coder
 
+![coverage](coverage.svg)
+
 This Swift package is an HTML entity encoder/decoder library.
 
 The decoder is based on a part of [Zyphy](https://github.com/kkebo/zyphy), which is a web browser engine written in Swift.
