@@ -94,7 +94,7 @@ struct CharRefTokenizer: ~Copyable {
     private mutating func namedEnd(
         endIndex: Substring.Index,
         replaceChars: (Unicode.Scalar, Unicode.Scalar),
-        input: inout Deque<Unicode.Scalar>
+        input: inout Deque<Unicode.Scalar>,
     ) -> CharRefProcessResult {
         let lastChar = self.nameBuffer[..<endIndex].last
         let nextChar: Character? =
@@ -155,7 +155,7 @@ struct CharRefTokenizer: ~Copyable {
 
     private mutating func hexadecimalStart(
         uppercase: Bool,
-        input: inout Deque<Unicode.Scalar>
+        input: inout Deque<Unicode.Scalar>,
     ) -> CharRefProcessResult {
         switch input.first {
         case ("0"..."9")?, ("A"..."F")?, ("a"..."f")?:
