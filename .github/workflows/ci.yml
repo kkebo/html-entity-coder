@@ -10,7 +10,7 @@ defaults:
     shell: bash -euo pipefail {0}
 jobs:
   test:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     container: swift:6.2
     permissions:
       contents: read
@@ -34,7 +34,7 @@ jobs:
           path: coverage_report.lcov
   comment-test:
     needs: test
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     continue-on-error: true
     permissions:
       contents: write
@@ -47,7 +47,7 @@ jobs:
           name: coverage-report-lcov
       - uses: k1LoW/octocov-action@a167dc0dee441b7ffc45e1b862ab55ec0d87f278  # v1.5.2
   lint:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     container: swift:6.4
     permissions:
       contents: read
@@ -55,7 +55,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - run: swift format lint -rsp .
   yamllint:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     permissions:
       contents: read
     steps:
