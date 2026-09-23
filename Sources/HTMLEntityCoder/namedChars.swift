@@ -30,7 +30,7 @@ extension Character {
 // FIXME: This process should be done at compile-time, not runtime.
 let reversedNamedChars: [Character: Substring] = .init(
     namedChars.lazy.compactMap { k, v in Character(from: v).map { ($0, k[...]) } },
-    uniquingKeysWith: dedup
+    uniquingKeysWith: dedup,
 )
 
 // FIXME: This process should be done at compile-time, not runtime.

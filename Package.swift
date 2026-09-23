@@ -15,7 +15,7 @@ let package = Package(
     products: [
         .library(
             name: "HTMLEntityCoder",
-            targets: ["HTMLEntityCoder"]
+            targets: ["HTMLEntityCoder"],
         )
     ],
     dependencies: [
@@ -26,7 +26,7 @@ let package = Package(
             name: "HTMLEntityCoder",
             dependencies: [
                 .product(name: "DequeModule", package: "swift-collections")
-            ]
+            ],
         ),
         .testTarget(
             name: "HTMLEntityCoderTests",
@@ -35,8 +35,8 @@ let package = Package(
             ],
             resources: [
                 .process("Resources")
-            ]
+            ],
         ),
     ],
-    swiftLanguageModes: [.v6]
+    swiftLanguageModes: [.v6],
 )

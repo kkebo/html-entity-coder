@@ -8,5 +8,5 @@ struct Entry: Decodable {
 let entities = try! JSONDecoder()
     .decode(
         [String: Entry].self,
-        from: Data(contentsOf: Bundle.module.url(forResource: "entities", withExtension: "json")!)
+        from: Data(contentsOf: Bundle.module.url(forResource: "entities", withExtension: "json")!),
     )
