@@ -7,7 +7,6 @@ private enum CharRefState {
     case ambiguousAmpersand
     case numeric
     case hexadecimalStart(uppercase: Bool)
-    case decimalStart
     case hexadecimal
     case decimal
     case numericEnd
@@ -45,7 +44,6 @@ struct CharRefTokenizer: ~Copyable {
         case .ambiguousAmpersand: self.ambiguousAmpersand(input: &input)
         case .numeric: self.numeric(input: &input)
         case .hexadecimalStart(let uppercase): self.hexadecimalStart(uppercase: uppercase, input: &input)
-        case .decimalStart: self.decimalStart(input: &input)
         case .hexadecimal: self.hexadecimal(input: &input)
         case .decimal: self.decimal(input: &input)
         case .numericEnd: self.numericEnd(input: &input)
@@ -148,7 +146,12 @@ struct CharRefTokenizer: ~Copyable {
         case "x":
             input.removeFirst()
             self.state = .hexadecimalStart(uppercase: false)
-        case _: self.state = .decimalStart
+        case ("0"..."9")?:
+            self.state = .decimal
+        case _:
+            // tokenizer.emitError(.absenceDigits)
+            input.prepend("#")
+            return .doneChar("&")
         }
         return .continue
     }
@@ -164,18 +167,6 @@ struct CharRefTokenizer: ~Copyable {
         case _:
             // tokenizer.emitError(.absenceDigits)
             input.prepend(uppercase ? "X" : "x")
-            input.prepend("#")
-            return .doneChar("&")
-        }
-    }
-
-    private mutating func decimalStart(input: inout Deque<Unicode.Scalar>) -> CharRefProcessResult {
-        switch input.first {
-        case ("0"..."9")?:
-            self.state = .decimal
-            return .continue
-        case _:
-            // tokenizer.emitError(.absenceDigits)
             input.prepend("#")
             return .doneChar("&")
         }
